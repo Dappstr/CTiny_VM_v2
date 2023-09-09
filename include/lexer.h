@@ -30,5 +30,4 @@ typedef struct Token {
 } Token;
 
 Error lex(char* source, Token* token);
-Token* create_token();
-void print_tokens(Token* root);
+

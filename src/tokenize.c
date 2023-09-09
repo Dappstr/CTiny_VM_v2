@@ -24,3 +24,12 @@ void print_tokens(Token *root) {
         root = root->next_token;
     }
 }
+
+size_t token_count(Token *root) {
+    size_t num_tokens = 1; //Assume at least one token
+    while(root) {
+        root = root->next_token;
+        ++num_tokens;
+    }
+    return num_tokens;
+}
