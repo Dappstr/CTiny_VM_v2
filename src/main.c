@@ -52,8 +52,19 @@ int main(int argc, char* argv[]) {
 
         print_tokens(tokens);
 
-        //Parse
+        size_t num_tokens = token_count(tokens);
+        Token* token_arr = malloc(sizeof(Token) * num_tokens);
         
+        tokenize(tokens, token_arr, num_tokens);
+
+        //Parse
+       /*
+        * if((err = parse(token_arr, num_tokens)).type = ERROR_SYNTAX) {
+        *   print_error(err);
+        *   exit(EXIT_FAILURE);
+        * 
+        * }
+        */
 
         free(contents);
     }
