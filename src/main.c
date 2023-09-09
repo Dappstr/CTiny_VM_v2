@@ -59,11 +59,8 @@ int main(int argc, char* argv[]) {
 
         //Parse
        /*
-        * if((err = parse(token_arr, num_tokens)).type = ERROR_SYNTAX) {
-        *   print_error(err);
-        *   exit(EXIT_FAILURE);
-        * 
-        * }
+        *err = parse(tokens, num_tokens, binds);
+        *print_error(err);
         */
 
         free(contents);

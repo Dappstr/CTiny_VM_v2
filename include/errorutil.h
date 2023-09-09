@@ -4,7 +4,8 @@ typedef struct Error {
     enum ErrorType {
         ERROR_NONE = 0,
         ERROR_ARGUMENT,
-        ERROR_SYNTAX
+        ERROR_SYNTAX,
+        ERROR_IDENT,
     } type;
     char* msg;
 } Error;

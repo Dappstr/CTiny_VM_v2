@@ -24,8 +24,10 @@ typedef struct Token {
 
     union TokenValue {
         int val;
+        char* id;
         InstType inst;
     } value;
+
     struct Token* next_token;
 } Token;
 

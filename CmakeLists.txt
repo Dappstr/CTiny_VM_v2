@@ -12,6 +12,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # specify where the source files are
 set(SOURCES
     src/main.c
+    src/errorutil.c
     src/fileutil.c
     src/lexer.c
     src/tokenize.c

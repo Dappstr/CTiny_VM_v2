@@ -55,12 +55,49 @@ int token_str_equal(const char *str, Token *token) {
 
 void tokenize(Token *root, Token *token_arr, size_t num_tokens) { 
     Token* temp = root;
+    int temp_val;
+    
     for(int i = 0; i < num_tokens; ++i) {
         //Copy the token string into the token index
         memcpy(&token_arr[i], temp, sizeof(Token));
-
-        if(token_str_equal("var", &token_arr[i])) {
+        if(token_str_equal("push", &token_arr[i]) || token_str_equal("print", &token_arr[i]) || token_str_equal("halt", &token_arr[i])) {
+            token_arr[i].type = INST;
+            if(token_str_equal("push", &token_arr[i])) {
+                token_arr[i].value.inst = PUSH;
+            }
+            else if(token_str_equal("print", &token_arr[i])) {
+                token_arr[i].value.inst = PRINT;
+            }
+            else if(token_str_equal("halt", &token_arr[i])) {
+                token_arr[i].value.inst = HALT;
+            }
+        } 
+        else if(token_str_equal("var", &token_arr[i])) {
             token_arr[i].type = VAR;
+            token_arr[i].value.val = 0;
+        }
+        
+        else if(token_str_equal("#", &token_arr[i])) {
+            token_arr[i].type = LIT;
+            token_arr[i].value.val = 0;
+        }
+
+        else if(token_str_equal("=", &token_arr[i])) {
+            token_arr[i].type = ASSNMT;
+            token_arr[i].value.val = 0;
+        }
+
+        else if((temp_val = atoi(token_arr[i].begin)) != 0) {
+            token_arr[i].type = NUM;
+            token_arr[i].value.val = temp_val;
+        }
+        
+        //Token is an identifier
+        else {
+            token_arr[i].type = IDENT;
+            size_t ident_size = token_arr[i].end - token_arr[i].begin;
+            token_arr[i].value.id = malloc(ident_size);
+            strncpy(token_arr[i].value.id, token_arr[i].begin, ident_size);
         }
         temp = temp->next_token;
     }
