@@ -1,0 +1,27 @@
+cmake_minimum_required(VERSION 3.10)
+
+# set the project name
+project(tiny_v2)
+
+# specify the C standard
+set(CMAKE_C_STANDARD 17)
+
+# compile_commands.json will be generated in the build folder
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+# specify where the source files are
+set(SOURCES
+    src/main.c
+    src/fileutil.c
+)
+
+# add the executable
+add_executable(tiny_v2 ${SOURCES})
+
+# specify where the header files are
+target_include_directories(tiny_v2 PRIVATE ${CMAKE_SOURCE_DIR}/include)
+
+# Copy compile_commands.json to the parent directory after generation
+add_custom_command(TARGET tiny_v2 POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${CMAKE_BINARY_DIR}/compile_commands.json
+        ${CMAKE_SOURCE_DIR}/compile_commands.json)
