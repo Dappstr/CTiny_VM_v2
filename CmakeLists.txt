@@ -13,6 +13,8 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(SOURCES
     src/main.c
     src/fileutil.c
+    src/lexer.c
+    src/tokenize.c
 )
 
 # add the executable
