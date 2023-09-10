@@ -56,7 +56,6 @@ int main(int argc, char* argv[]) {
         
         tokenize(tokens, token_arr, num_tokens);
 
-
         static int* stack = NULL;
         Binding* binds = NULL;
         size_t num_binds = 0;

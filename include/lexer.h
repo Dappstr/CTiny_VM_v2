@@ -9,13 +9,23 @@ typedef enum TokenType {
     VAR,
     IDENT,
     ASSNMT,
+    FUNC,
+    L_PAREN,
+    R_PAREN,
+    COMMA,
 } TokenType;
 
 typedef enum InstType {
     PUSH,
     PRINT,
+    ADD,
+    MULT,
     HALT,
 } InstType;
+
+typedef enum FuncType {
+    SET,
+} FuncType;
 
 typedef struct Token {
     TokenType type;
@@ -26,6 +36,7 @@ typedef struct Token {
         int val;
         char* id;
         InstType inst;
+        FuncType func;
     } value;
 
     struct Token* next_token;

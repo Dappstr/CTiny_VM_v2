@@ -2,4 +2,6 @@ var a = 5
 push #10
 push a
 print
+set(1, 20)
+print
 halt

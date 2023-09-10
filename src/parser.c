@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <limits.h>
 #include <string.h>
+#include <assert.h>
 
 #include "../include/parser.h"
 #include "../include/errorutil.h"
@@ -77,9 +78,67 @@ Error parse(Token *tokens, size_t num_tokens, Binding *binds, size_t num_binds, 
                         ++nums_pushed;
                         break;
                     }
+                case ADD: {
+                    int total = 0;
+                    for(int x = 0; x < nums_pushed; ++x) {
+                        total += stack[x];
+                    }
+                    printf("%d", total);
+                }
+                case MULT: {
+                    if(nums_pushed == 0) {
+                        break;
+                    }
+                    else if(nums_pushed == 1) {
+                        printf("%d\n", stack[0]);
+                    }
+                    else {
+                        int total = stack[0];
+                        for(int x = 1; x < nums_pushed; ++x) {
+                            total *= stack[x];
+                        }
+                        printf("%d\n", total);
+                    }
+                }
                 case HALT:
                     ERROR_PREP(err, ERROR_NONE, NULL);
                     return err;
+            }
+        }
+        else if(tokens[i].type == FUNC) {
+            switch(tokens[i].value.func) {
+                case SET: {
+                        if(tokens[i+1].type != L_PAREN) {
+                            ERROR_PREP(err, ERROR_SYNTAX, "Expected '(' after \"set\"");
+                            return err;
+                        }
+                        else {
+                            int indx = tokens[i+2].value.val;
+                            if(indx >= nums_pushed) {
+                                printf("\"set\" index is greater than amount of numbers pushed!\n");
+                                exit(EXIT_FAILURE);
+                            }
+                            else {
+                                if(tokens[i+3].type != COMMA) {
+                                    ERROR_PREP(err, ERROR_SYNTAX, "Expected ',' after set index");
+                                    return err;
+                                }
+                                else {
+                                    int value = tokens[i+4].value.val;
+                                    if(tokens[i+5].type != R_PAREN) {
+                                        ERROR_PREP(err, ERROR_SYNTAX, "Expected ')' after set value");
+                                        return err;
+                                    }
+                                    else {
+                                        assert(indx < nums_pushed && "indx greater than nums pushed!");
+                                        stack[indx] = value;
+                                        i+=5;
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                  }
             }
         }
         else if(tokens[i].type == VAR) {

@@ -68,10 +68,22 @@ void tokenize(Token *root, Token *token_arr, size_t num_tokens) {
             else if(token_str_equal("print", &token_arr[i])) {
                 token_arr[i].value.inst = PRINT;
             }
+            else if(token_str_equal("add", &token_arr[i])) {
+                token_arr[i].value.inst = ADD;
+            }
+            else if(token_str_equal("mult", &token_arr[i])) {
+                token_arr[i].value.inst = MULT;
+            }
             else if(token_str_equal("halt", &token_arr[i])) {
                 token_arr[i].value.inst = HALT;
             }
-        } 
+        }
+
+        else if(token_str_equal("set", &token_arr[i])) {
+            token_arr[i].type = FUNC;
+            token_arr[i].value.func = SET;
+        }
+
         else if(token_str_equal("var", &token_arr[i])) {
             token_arr[i].type = VAR;
             token_arr[i].value.val = 0;
@@ -84,6 +96,21 @@ void tokenize(Token *root, Token *token_arr, size_t num_tokens) {
 
         else if(token_str_equal("=", &token_arr[i])) {
             token_arr[i].type = ASSNMT;
+            token_arr[i].value.val = 0;
+        }
+
+        else if(token_str_equal("(", &token_arr[i])) {
+            token_arr[i].type = L_PAREN;
+            token_arr[i].value.val = 0;
+        }
+
+        else if(token_str_equal(")", &token_arr[i])) {
+            token_arr[i].type = R_PAREN;
+            token_arr[i].value.val = 0;
+        }
+
+        else if(token_str_equal(",", &token_arr[i])) {
+            token_arr[i].type = COMMA;
             token_arr[i].value.val = 0;
         }
 

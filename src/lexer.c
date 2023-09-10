@@ -5,7 +5,7 @@
 #include "../include/lexer.h"
 #include "../include/errorutil.h"
 
-const char* delims = " \r\n()#=";
+const char* delims = " \r\n(),#=";
 const char* ws = " \r\n";
 
 Error lex(char* source, Token* token) {
