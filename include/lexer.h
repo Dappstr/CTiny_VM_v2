@@ -17,6 +17,7 @@ typedef enum TokenType {
 
 typedef enum InstType {
     PUSH,
+    POP,
     PRINT,
     ADD,
     MULT,
@@ -25,6 +26,8 @@ typedef enum InstType {
 
 typedef enum FuncType {
     SET,
+    ALLOC, //TODO
+    DEALLOC, //TODO
 } FuncType;
 
 typedef struct Token {

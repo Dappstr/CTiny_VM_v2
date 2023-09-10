@@ -60,10 +60,13 @@ void tokenize(Token *root, Token *token_arr, size_t num_tokens) {
     for(int i = 0; i < num_tokens; ++i) {
         //Copy the token string into the token index
         memcpy(&token_arr[i], temp, sizeof(Token));
-        if(token_str_equal("push", &token_arr[i]) || token_str_equal("print", &token_arr[i]) || token_str_equal("halt", &token_arr[i])) {
+        if(token_str_equal("push", &token_arr[i]) || token_str_equal("pop", &token_arr[i]) || token_str_equal("print", &token_arr[i]) || token_str_equal("halt", &token_arr[i])) {
             token_arr[i].type = INST;
             if(token_str_equal("push", &token_arr[i])) {
                 token_arr[i].value.inst = PUSH;
+            }
+            else if(token_str_equal("pop", &token_arr[i])) {
+                token_arr[i].value.inst = POP;
             }
             else if(token_str_equal("print", &token_arr[i])) {
                 token_arr[i].value.inst = PRINT;

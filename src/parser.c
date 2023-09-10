@@ -19,6 +19,7 @@ int get_id_value(char *id, Binding* binds, size_t num_binds) {
 Error parse(Token *tokens, size_t num_tokens, Binding *binds, size_t num_binds, int *stack) {
     Error err = {ERROR_NONE, NULL};
     size_t nums_pushed = 0;
+    size_t nums_allocated = 0;
     for(int i = 0; i < num_tokens; ++i) {
         if(tokens[i].type == INST) {
             switch(tokens[i].value.inst) {
@@ -76,8 +77,29 @@ Error parse(Token *tokens, size_t num_tokens, Binding *binds, size_t num_binds, 
                             i+=1;
                         }
                         ++nums_pushed;
+                        ++nums_allocated;
                         break;
                     }
+                case POP: {
+                    if(nums_allocated < 1) {
+                        free(stack);
+                        stack = NULL;
+                    }
+                    else {
+                        printf("%d popped\n", stack[nums_allocated - 1]); 
+                        if(nums_allocated > 0) {
+                            stack = realloc(stack, sizeof(int) * (nums_allocated - 1)); 
+                            if(!stack) {
+                                printf("Failed to reallocate stack after pop\n");
+                                exit(EXIT_FAILURE);
+                            }
+
+                            nums_allocated--;
+                            nums_pushed--;
+                        }
+                    }
+                    break;
+                }
                 case ADD: {
                     int total = 0;
                     for(int x = 0; x < nums_pushed; ++x) {

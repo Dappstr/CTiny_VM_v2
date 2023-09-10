@@ -1,7 +1,8 @@
-var a = 5
-push #10
+var a = 2
+push #1
 push a
+push #3
 print
-set(1, 20)
+pop
 print
 halt
