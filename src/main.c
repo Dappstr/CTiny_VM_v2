@@ -6,6 +6,7 @@
 #include "../include/errorutil.h"
 #include "../include/lexer.h"
 #include "../include/tokenize.h"
+#include "../include/parser.h"
 
 void print_usage(const char* argv) {
     printf("USAGE: %s <path to file>", argv);
@@ -50,19 +51,18 @@ int main(int argc, char* argv[]) {
             }
         }
 
-        print_tokens(tokens);
-
         size_t num_tokens = token_count(tokens);
         Token* token_arr = malloc(sizeof(Token) * num_tokens);
         
         tokenize(tokens, token_arr, num_tokens);
 
-        //Parse
-       /*
-        *err = parse(tokens, num_tokens, binds);
-        *print_error(err);
-        */
 
+        static int* stack = NULL;
+        Binding* binds = NULL;
+        size_t num_binds = 0;
+       
+        err = parse(token_arr, num_tokens, binds, num_binds, stack);
+        print_error(err);
         free(contents);
     }
 

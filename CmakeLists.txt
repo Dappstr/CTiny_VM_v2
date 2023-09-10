@@ -16,6 +16,7 @@ set(SOURCES
     src/fileutil.c
     src/lexer.c
     src/tokenize.c
+    src/parser.c
 )
 
 # add the executable
