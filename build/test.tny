@@ -2,7 +2,10 @@ var a = 2
 push #1
 push a
 push #3
+dealloc(1)
 print
-pop
+alloc(2)
+print
+push #3
 print
 halt

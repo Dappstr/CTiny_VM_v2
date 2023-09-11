@@ -41,6 +41,13 @@ int token_str_equal(const char *str, Token *token) {
         return 0;
     }
 
+    size_t token_length = token->end - token->begin;
+    size_t str_length = strlen(str);
+
+    if(token_length != str_length) {
+        return 0;
+    }
+
     char* beg = token->begin;
     while(*str && beg < token->end) {
         if(*beg != *str) {
@@ -50,7 +57,7 @@ int token_str_equal(const char *str, Token *token) {
         str++;
     }
     
-    return 1;
+    return *str == '\0';
 }
 
 void tokenize(Token *root, Token *token_arr, size_t num_tokens) { 
@@ -82,9 +89,17 @@ void tokenize(Token *root, Token *token_arr, size_t num_tokens) {
             }
         }
 
-        else if(token_str_equal("set", &token_arr[i])) {
+        else if(token_str_equal("set", &token_arr[i]) || token_str_equal("alloc", &token_arr[i]) || token_str_equal("dealloc", &token_arr[i])) {
             token_arr[i].type = FUNC;
-            token_arr[i].value.func = SET;
+            if(token_str_equal("set", &token_arr[i])) {
+                token_arr[i].value.func = SET;
+            }
+            else if(token_str_equal("alloc", &token_arr[i])) {
+                token_arr[i].value.func = ALLOC;
+            }
+            else if(token_str_equal("dealloc", &token_arr[i])) {
+                token_arr[i].value.func = DEALLOC;
+            }
         }
 
         else if(token_str_equal("var", &token_arr[i])) {

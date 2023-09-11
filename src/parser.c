@@ -25,8 +25,8 @@ Error parse(Token *tokens, size_t num_tokens, Binding *binds, size_t num_binds, 
             switch(tokens[i].value.inst) {
                 case PRINT:
                     printf("[ ");
-                    for(int i = 0; i < nums_pushed; ++i) {
-                        if(i == nums_pushed - 1 || nums_pushed == 0 || nums_pushed == 1) {
+                    for(int i = 0; i < nums_allocated; ++i) {
+                        if(i == nums_allocated - 1 || nums_allocated == 0 || nums_allocated == 1) {
                             printf("%d ]\n", stack[i]);
                         }
                         else {
@@ -39,6 +39,10 @@ Error parse(Token *tokens, size_t num_tokens, Binding *binds, size_t num_binds, 
                         stack = malloc(sizeof(int) * (nums_pushed + 1));
                         if(!stack) {
                             printf("Failed to allocate memory for stack");
+                            exit(EXIT_FAILURE);
+                        }
+                        else if(nums_pushed > nums_allocated) {
+                            printf("Push index greater than allocated amount of numbers!\n");
                             exit(EXIT_FAILURE);
                         }
                         else {
@@ -54,30 +58,38 @@ Error parse(Token *tokens, size_t num_tokens, Binding *binds, size_t num_binds, 
                         return err;
                     }
                     else {
+                        int val_to_push;
                         if(tokens[i+1].type == LIT) {
                             if(tokens[i+2].type != NUM) {
                                 ERROR_PREP(err, ERROR_SYNTAX, "Expected number after '#'");
                                 return err;
                             }
                             else {
-                                int val_to_push = tokens[i+2].value.val;
-                                stack[nums_pushed] = val_to_push;
+                                val_to_push = tokens[i+2].value.val;
                                 i+=2;
                             }
                         }
                         else {
                             char* id = malloc(tokens[i+1].end - tokens[i+1].begin);
                             strncpy(id, tokens[i+1].begin, tokens[i+1].end - tokens[i+1].begin);
-                            int val_to_push = get_id_value(id, binds, num_binds);
+                            val_to_push = get_id_value(id, binds, num_binds);
+                            free(id);
                             if(val_to_push == INT_MIN) {
                                 ERROR_PREP(err, ERROR_SYNTAX, "Unknown identifier");
                                 return err;
                             }
-                            stack[nums_pushed] = val_to_push;
                             i+=1;
                         }
+                        if(nums_pushed >= nums_allocated) {
+                            stack = realloc(stack, sizeof(int) * (nums_allocated + 1));
+                            if(!stack) {
+                                printf("Failed to reallocate memory for another integer\n");
+                                exit(EXIT_FAILURE);
+                            }
+                            nums_allocated++;
+                        }
+                        stack[nums_pushed] = val_to_push;
                         ++nums_pushed;
-                        ++nums_allocated;
                         break;
                     }
                 case POP: {
@@ -161,6 +173,74 @@ Error parse(Token *tokens, size_t num_tokens, Binding *binds, size_t num_binds, 
                         }
                         break;
                   }
+                  case ALLOC:
+                          if(tokens[i+1].type != L_PAREN) {
+                              ERROR_PREP(err, ERROR_SYNTAX, "Expected '(' after \"dealloc\"");
+                              return err;
+                          }
+                          else {
+                              if(tokens[i+2].type != NUM) {
+                                  ERROR_PREP(err, ERROR_SYNTAX, "Expected literal after '('");
+                                  return err;
+                              }
+                              else {
+                                  if(tokens[i+3].type != R_PAREN) {
+                                      ERROR_PREP(err, ERROR_SYNTAX, "Expected ')' after number literal");
+                                      return err;
+                                  }
+                                  else {
+                                      int alloc_num = tokens[i+2].value.val;
+                                      stack = realloc(stack, sizeof(int) * (nums_allocated + alloc_num));
+                                      memset(stack + nums_pushed, 0, alloc_num);
+                                      nums_allocated += alloc_num;
+                                  }
+                              }
+                          }
+                          i += 3;
+                          break; 
+                  case DEALLOC:
+                          if(tokens[i+1].type != L_PAREN) {
+                              ERROR_PREP(err, ERROR_SYNTAX, "Expected '(' after \"dealloc\"");
+                              return err;
+                          }
+                          else {
+                              if(tokens[i+2].type != NUM) {
+                                  ERROR_PREP(err, ERROR_SYNTAX, "Expected literal after '('");
+                                  return err;
+                              }
+                              else {
+                                  if(tokens[i+3].type != R_PAREN) {
+                                      ERROR_PREP(err, ERROR_SYNTAX, "Expected ')' after number literal");
+                                      return err;
+                                  }
+                                  else {
+                                      int dealloc_num = tokens[i+2].value.val;
+                                      if(dealloc_num > nums_allocated) {
+                                          printf("Error! Deallocation amount is greater than allocated amount of integers!\n");
+                                          exit(EXIT_FAILURE);
+                                      }
+                                      else if(dealloc_num == nums_allocated) {
+                                          free(stack);
+                                          nums_pushed = 0;
+                                          nums_allocated = 0;
+                                          stack = NULL;
+                                      }
+                                      else {
+                                          if(nums_allocated - dealloc_num < nums_pushed) {
+                                              nums_pushed = nums_allocated - dealloc_num;
+                                          }
+                                          stack = realloc(stack, sizeof(int) * (nums_allocated - dealloc_num));
+                                          if(!stack) {
+                                              printf("Error reallocating stack after deallocation!\n");
+                                              exit(EXIT_FAILURE);
+                                          }
+                                          nums_allocated -= dealloc_num;
+                                      }
+                                  }
+                              }
+                          }
+                          i += 3;
+                          break;
             }
         }
         else if(tokens[i].type == VAR) {
