@@ -18,6 +18,6 @@ This tiny VM is something I worked on over a few days as practice for getting in
 
 To declare a variable (integers are the only type supported), you do `var x = 10` for example
 
-To push a value or variable to the stack, you do `push N` where `N` can be either a variable or a number literal
+To push a value or variable to the stack, you do `push #N` where `N` can be a number literal or `push N` where `N` represents a variable
 
 To pop a value, you simply write `pop`
